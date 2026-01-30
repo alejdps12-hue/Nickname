@@ -308,10 +308,12 @@ form {
     flex: 1;
     text-align: center;
     padding: 1rem 0.5rem;
+    min-width: 60px;
 }
 
 #birth-year {
     flex: 2;
+    min-width: 80px;
 }
 
 .length-options {
