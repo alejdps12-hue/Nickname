@@ -309,3 +309,40 @@ document.addEventListener('DOMContentLoaded', () => {
     initPixelBackground();
     initBirds();
 });
+
+// 방문자 수 추적
+function updateVisitorCount() {
+    const today = new Date().toDateString();
+    const visitorData = JSON.parse(localStorage.getItem('visitorData') || '{}');
+
+    // 오늘 방문자 수
+    if (visitorData.date !== today) {
+        // 날짜가 바뀌면 오늘 방문자 수 리셋
+        visitorData.date = today;
+        visitorData.todayCount = 1;
+    } else {
+        // 같은 날이면 세션 확인
+        if (!sessionStorage.getItem('visited')) {
+            visitorData.todayCount = (visitorData.todayCount || 0) + 1;
+        }
+    }
+
+    // 총 방문자 수
+    if (!sessionStorage.getItem('visited')) {
+        visitorData.totalCount = (visitorData.totalCount || 0) + 1;
+        sessionStorage.setItem('visited', 'true');
+    }
+
+    // 저장
+    localStorage.setItem('visitorData', JSON.stringify(visitorData));
+
+    // 화면에 표시
+    const todayElement = document.getElementById('today-visitors');
+    const totalElement = document.getElementById('total-visitors');
+
+    if (todayElement) todayElement.textContent = visitorData.todayCount || 0;
+    if (totalElement) totalElement.textContent = visitorData.totalCount || 0;
+}
+
+// 페이지 로드 시 방문자 수 업데이트
+updateVisitorCount();
