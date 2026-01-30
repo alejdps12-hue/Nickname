@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 별명 생성기 | 당신의 운명적인 닉네임</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+KR:wght@300;500;700;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="pixel-bg" class="pixel-bg"></div>
+    <div class="container">
+        <header>
+            <h1>✨ 별명 생성기</h1>
+            <p class="subtitle">생년월일과 전화번호로 당신의 운명적인 별명을 찾아보세요.</p>
+        </header>
+
+        <main>
+            <div class="card glass">
+                <form id="nickname-form">
+                    <div class="input-group">
+                        <label>생년월일</label>
+                        <div class="birth-container">
+                            <input type="tel" id="birth-year" placeholder="YYYY" maxlength="4" required>
+                            <input type="tel" id="birth-month" placeholder="MM" maxlength="2" required>
+                            <input type="tel" id="birth-day" placeholder="DD" maxlength="2" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>별명 길이</label>
+                        <div class="length-options">
+                            <label class="length-option">
+                                <input type="radio" name="nickname-length" value="short">
+                                <span>짧게 (2단어)</span>
+                            </label>
+                            <label class="length-option">
+                                <input type="radio" name="nickname-length" value="medium" checked>
+                                <span>보통 (3단어)</span>
+                            </label>
+                            <label class="length-option">
+                                <input type="radio" name="nickname-length" value="long">
+                                <span>길게 (4단어)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="phone-last">전화번호 뒷자리 (4자)</label>
+                        <input type="tel" id="phone-last" placeholder="####" maxlength="4" pattern="[0-9]{4}" required
+                            title="숫자 4자리를 입력해주세요.">
+                    </div>
+
+                    <button type="submit" class="generate-btn">
+                        <span>별명 생성하기</span>
+                        <div class="glow-effect"></div>
+                    </button>
+                </form>
+            </div>
+
+            <div id="loading-container" class="loading-container hidden">
+                <div class="loader-card glass">
+                    <div class="spinner"></div>
+                    <p id="loading-text" class="loading-text">데이터를 분석 중입니다...</p>
+                    <div class="progress-bar-bg">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="result-container" class="result-container hidden">
+                <div class="result-card glass">
+                    <p class="result-label">당신의 운명적인 별명은...</p>
+                    <h2 id="generated-nickname" class="nickname-text"></h2>
+
+                    <!-- 결과 화면 글자 수 선택 -->
+                    <div class="result-length-options">
+                        <label class="result-length-btn">
+                            <input type="radio" name="result-nickname-length" value="short">
+                            <span>짧게</span>
+                        </label>
+                        <label class="result-length-btn">
+                            <input type="radio" name="result-nickname-length" value="medium" checked>
+                            <span>보통</span>
+                        </label>
+                        <label class="result-length-btn">
+                            <input type="radio" name="result-nickname-length" value="long">
+                            <span>길게</span>
+                        </label>
+                    </div>
+
+                    <div class="result-actions">
+                        <button id="copy-btn" class="action-btn secondary">복사하기</button>
+                        <button id="retry-btn" class="action-btn primary">다시 하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 별명 히스토리 섹션 -->
+            <div id="history-container" class="history-container hidden">
+                <div class="history-card glass">
+                    <h3>📜 이전 별명 기록</h3>
+                    <div id="history-list" class="history-list"></div>
+                    <button id="clear-history-btn" class="clear-history-btn">기록 지우기</button>
+                </div>
+            </div>
+
+            <!-- 사이트 정보 섹션 추가 -->
+            <section class="info-sections">
+                <div class="info-card glass">
+                    <h3>💡 왜 별명 생성기인가요?</h3>
+                    <p>당신의 생년월일은 우주가 당신에게 부여한 고유한 주파수이고, 전화번호는 현대 세상에서 당신을 규정하는 디지털 코드입니다. 이 두 가지를 결합하면 오직 당신만이 가질 수 있는
+                        운명적인 에너지가 탄생합니다. 우리의 알고리즘은 이 에너지를 분석하여 당신의 본질을 가장 잘 표현하는 판타지 별명을 찾아냅니다.</p>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card glass">
+                        <h3>🚀 우리만의 강점</h3>
+                        <ul>
+                            <li><strong>480,000+ 조합</strong>: 80개 형용사 × 100개 명사 × 60개 칭호의 방대한 데이터셋</li>
+                            <li><strong>완전 랜덤 생성</strong>: '다시 하기'를 누를 때마다 새로운 별명 발견</li>
+                            <li><strong>픽셀 아트 감성</strong>: 눈이 즐거운 고퀄리티 레트로 판타지 비주얼</li>
+                            <li><strong>철저한 개인정보 보호</strong>: 모든 연산은 브라우저에서만 처리, 서버 전송 없음</li>
+                            <li><strong>지능형 입력 시스템</strong>: 자동 포커스 이동으로 빠르고 편한 입력</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card glass">
+                        <h3>🛠️ 동작 원리</h3>
+                        <p>입력하신 생년월일(연/월/일)과 전화번호는 <strong>수학적 해싱 알고리즘</strong>에 <strong>랜덤 오프셋</strong>을 결합하여 고유한 색인
+                            값으로 변환됩니다. 이 값은 80가지 형용사, 100가지 명사, 60가지 칭호 데이터셋과 매칭되며, 매 생성마다 다른 랜덤 시드를 사용하여 무한에 가까운 조합을
+                            만들어냅니다.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 AI Nickname Generator. Created with ❤️</p>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
