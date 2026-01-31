@@ -159,7 +159,7 @@
         const chars = Array.from(name.replace(/\s+/g, ''));
         if (chars.length === 0) return '';
 
-        return chars.map(() => '###').join(' ');
+        return chars.join('\n');
     }
 
     function showLoading(callback) {

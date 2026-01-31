@@ -538,6 +538,7 @@ input:focus {
     margin: 1.5rem 0;
     color: white;
     text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+    white-space: pre-line;
 }
 
 .result-label {
