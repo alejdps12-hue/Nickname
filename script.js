@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('nickname-form');
     const resultContainer = document.getElementById('result-container');
     const nicknameDisplay = document.getElementById('generated-nickname');
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const birthDay = document.getElementById('birth-day');
     const phoneLast = document.getElementById('phone-last');
 
-    // 자동 포커스 이동 로직
+    // ?먮룞 ?ъ빱???대룞 濡쒖쭅
     const setupAutoForward = (current, next, length) => {
         current.addEventListener('input', () => {
             if (current.value.length >= length && next) {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!year || !month || !day || !phone) return;
 
-        // 로딩 시작
+        // 濡쒕뵫 ?쒖옉
         showLoading(() => {
             const nickname = generateNickname(year, month, day, phone, length);
             showResult(nickname);
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!year || !month || !day || !phone) return;
 
-        // 바로 다시 생성
+        // 諛붾줈 ?ㅼ떆 ?앹꽦
         showLoading(() => {
             const nickname = generateNickname(year, month, day, phone, length);
             showResult(nickname);
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = nicknameDisplay.textContent;
         navigator.clipboard.writeText(text).then(() => {
             const originalText = copyBtn.textContent;
-            copyBtn.textContent = '복사 완료!';
+            copyBtn.textContent = '蹂듭궗 ?꾨즺!';
             setTimeout(() => {
                 copyBtn.textContent = originalText;
             }, 2000);
@@ -76,17 +76,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const day = parseInt(dayStr);
         const phoneNum = parseInt(phoneStr);
 
-        // 랜덤 오프셋 추가 (매번 다른 결과 생성)
+        // ?쒕뜡 ?ㅽ봽??異붽? (留ㅻ쾲 ?ㅻⅨ 寃곌낵 ?앹꽦)
         const randomOffset = Math.floor(Math.random() * 1000);
 
-        // 로직 기반 인덱스 계산 (고유성 확보 + 랜덤성)
+        // 濡쒖쭅 湲곕컲 ?몃뜳??怨꾩궛 (怨좎쑀???뺣낫 + ?쒕뜡??
         const adjIndex = (year + month + randomOffset) % nicknameData.adjectives.length;
         const nounIndex = (day * phoneNum + randomOffset) % nicknameData.nouns.length;
 
         const phoneSum = phoneStr.split('').reduce((acc, curr) => acc + parseInt(curr), 0);
         const titleIndex = (year + month + day + phoneSum + randomOffset) % nicknameData.titles.length;
 
-        // 추가 단어를 위한 인덱스
+        // 異붽? ?⑥뼱瑜??꾪븳 ?몃뜳??
         const extraAdjIndex = (year * day + randomOffset) % nicknameData.adjectives.length;
 
         const adjective = nicknameData.adjectives[adjIndex];
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = nicknameData.titles[titleIndex];
         const extraAdj = nicknameData.adjectives[extraAdjIndex];
 
-        // 길이에 따라 다른 형식 반환
+        // 湲몄씠???곕씪 ?ㅻⅨ ?뺤떇 諛섑솚
         switch (length) {
             case 'short':
                 return `${adjective} ${noun}`;
@@ -111,11 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressBar = document.getElementById('progress-bar');
         const loadingText = document.getElementById('loading-text');
         const messages = [
-            "데이터를 분석 중입니다...",
-            "당신의 운명을 읽고 있습니다...",
-            "전설의 고서를 뒤지는 중...",
-            "가장 어울리는 이름을 찾는 중...",
-            "거의 다 되었습니다!"
+            "?곗씠?곕? 遺꾩꽍 以묒엯?덈떎...",
+            "?뱀떊???대챸???쎄퀬 ?덉뒿?덈떎...",
+            "?꾩꽕??怨좎꽌瑜??ㅼ???以?..",
+            "媛???댁슱由щ뒗 ?대쫫??李얜뒗 以?..",
+            "嫄곗쓽 ???섏뿀?듬땲??"
         ];
 
         form.closest('.card').classList.add('hidden');
@@ -161,85 +161,10 @@ document.addEventListener('DOMContentLoaded', () => {
         resultContainer.classList.add('hidden');
     }
 
-    // 히스토리 관리 함수
-    const HISTORY_KEY = 'nickname-history';
-    const MAX_HISTORY = 10;
-
-    function saveToHistory(nickname) {
-        let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-
-        // 새로운 항목 추가 (시간 포함)
-        history.unshift({
-            nickname: nickname,
-            timestamp: new Date().toLocaleString('ko-KR', {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })
-        });
-
-        // 최대 개수 제한
-        if (history.length > MAX_HISTORY) {
-            history = history.slice(0, MAX_HISTORY);
-        }
-
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-        displayHistory();
-    }
-
-    function displayHistory() {
-        const historyContainer = document.getElementById('history-container');
-        const historyList = document.getElementById('history-list');
-        const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-
-        if (history.length === 0) {
-            historyContainer.classList.add('hidden');
-            return;
-        }
-
-        historyContainer.classList.remove('hidden');
-        historyList.innerHTML = '';
-
-        history.forEach(item => {
-            const historyItem = document.createElement('div');
-            historyItem.className = 'history-item';
-            historyItem.innerHTML = `
-                <span class="history-item-text">${item.nickname}</span>
-                <span class="history-item-time">${item.timestamp}</span>
-            `;
-
-            historyItem.addEventListener('click', () => {
-                navigator.clipboard.writeText(item.nickname).then(() => {
-                    const originalText = historyItem.querySelector('.history-item-text').textContent;
-                    historyItem.querySelector('.history-item-text').textContent = '✓ 복사됨!';
-                    setTimeout(() => {
-                        historyItem.querySelector('.history-item-text').textContent = originalText;
-                    }, 1500);
-                });
-            });
-
-            historyList.appendChild(historyItem);
-        });
-    }
-
-    function clearHistory() {
-        if (confirm('모든 별명 기록을 삭제하시겠습니까?')) {
-            localStorage.removeItem(HISTORY_KEY);
-            displayHistory();
-        }
-    }
-
-    // 히스토리 초기화 및 이벤트 리스너
-    document.getElementById('clear-history-btn').addEventListener('click', clearHistory);
-    displayHistory();
-
-    function showResult(nickname) {
+    // ?덉뒪?좊━ 愿由??⑥닔\n\n    function showResult(nickname) {
         resultContainer.classList.remove('hidden');
         typeWriter(nickname, nicknameDisplay);
-        saveToHistory(nickname);  // 히스토리에 저장
-
-        // 입력폼의 길이 선택과 동기화
+        // ?낅젰?쇱쓽 湲몄씠 ?좏깮怨??숆린??
         const selectedLength = document.querySelector('input[name="nickname-length"]:checked').value;
         const resultLengthRadio = document.querySelector(`input[name="result-nickname-length"][value="${selectedLength}"]`);
         if (resultLengthRadio) {
@@ -247,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 픽셀 입자 생성기
+    // ?쎌? ?낆옄 ?앹꽦湲?
     function initPixelBackground() {
         const bg = document.getElementById('pixel-bg');
         const count = 30;
@@ -269,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             particle.style.setProperty('--drift', drift);
             particle.style.animationDelay = `-${delay}s`;
 
-            // 색상 무작위 (핑크/화이트 계열 - 꽃잎 느낌)
+            // ?됱긽 臾댁옉??(?묓겕/?붿씠??怨꾩뿴 - 苑껋옂 ?먮굦)
             const isPink = Math.random() > 0.4;
             particle.style.background = isPink ? 'rgba(255, 182, 193, 0.7)' : 'rgba(255, 255, 255, 0.5)';
 
@@ -277,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 새 생성기
+    // ???앹꽦湲?
     function initBirds() {
         const bg = document.getElementById('pixel-bg');
 
@@ -286,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bird.className = 'bird';
 
             const duration = Math.random() * 10 + 15;
-            const startY = Math.random() * 60 + 10; // 10% ~ 70% 높이
+            const startY = Math.random() * 60 + 10; // 10% ~ 70% ?믪씠
             const endY = startY + (Math.random() - 0.5) * 20;
 
             bird.style.setProperty('--duration', `${duration}s`);
@@ -295,13 +220,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             bg.appendChild(bird);
 
-            // 애니메이션 종료 후 제거
+            // ?좊땲硫붿씠??醫낅즺 ???쒓굅
             setTimeout(() => {
                 bird.remove();
             }, duration * 1000);
         }
 
-        // 초기 생성 및 주기적 생성
+        // 珥덇린 ?앹꽦 諛?二쇨린???앹꽦
         setTimeout(spawnBird, 1000);
         setInterval(spawnBird, 8000);
     }
@@ -310,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initBirds();
 });
 
-// 방문자 (CountAPI) - "방문" 횟수
+// 諛⑸Ц??(CountAPI) - "諛⑸Ц" ?잛닔
 async function updateVisitorCount() {
     const todayElement = document.getElementById('today-visitors');
     const totalElement = document.getElementById('total-visitors');
@@ -349,5 +274,6 @@ async function updateVisitorCount() {
     }
 }
 
-// 페이지 로드 시 방문자 수 업데이트
+// ?섏씠吏 濡쒕뱶 ??諛⑸Ц?????낅뜲?댄듃
 updateVisitorCount();
+
