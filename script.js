@@ -159,11 +159,7 @@
         const chars = Array.from(name.replace(/\s+/g, ''));
         if (chars.length === 0) return '';
 
-        return chars.map((ch) => {
-            const code = ch.codePointAt(0);
-            const adj = nicknameData.adjectives[code % nicknameData.adjectives.length];
-            return `${adj}${ch}`;
-        }).join(' ');
+        return chars.map(() => '###').join(' ');
     }
 
     function showLoading(callback) {
