@@ -329,20 +329,25 @@ async function updateVisitorCount() {
     const dd = String(now.getDate()).padStart(2, '0');
     const todayKey = `today_${pathKey}_${yyyy}${mm}${dd}`;
 
+    const totalUrl = `https://api.countapi.xyz/hit/${encodeURIComponent(namespace)}/${encodeURIComponent(totalKey)}`;
+    const todayUrl = `https://api.countapi.xyz/hit/${encodeURIComponent(namespace)}/${encodeURIComponent(todayKey)}`;
+
     try {
-        const totalRes = await fetch(`https://api.countapi.xyz/hit/${namespace}/${totalKey}`);
+        const totalRes = await fetch(totalUrl, { cache: 'no-store', mode: 'cors' });
         const totalData = await totalRes.json();
         if (totalElement) totalElement.textContent = totalData.value;
     } catch (e) {
-        // fail silently
+        if (totalElement) totalElement.textContent = '-';
+        console.warn('CountAPI total failed', e);
     }
 
     try {
-        const todayRes = await fetch(`https://api.countapi.xyz/hit/${namespace}/${todayKey}`);
+        const todayRes = await fetch(todayUrl, { cache: 'no-store', mode: 'cors' });
         const todayData = await todayRes.json();
         if (todayElement) todayElement.textContent = todayData.value;
     } catch (e) {
-        // fail silently
+        if (todayElement) todayElement.textContent = '-';
+        console.warn('CountAPI today failed', e);
     }
 }
 
