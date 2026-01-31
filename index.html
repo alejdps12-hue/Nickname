@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="ko">
 
 <head>
@@ -38,36 +38,57 @@
             <div class="card glass">
                 <form id="nickname-form">
                     <div class="input-group">
-                        <label>생년월일</label>
-                        <div class="birth-container">
-                            <input type="tel" id="birth-year" placeholder="YYYY" maxlength="4" required>
-                            <input type="tel" id="birth-month" placeholder="MM" maxlength="2" required>
-                            <input type="tel" id="birth-day" placeholder="DD" maxlength="2" required>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>별명 길이</label>
+                        <label>생성 방식</label>
                         <div class="length-options">
                             <label class="length-option">
-                                <input type="radio" name="nickname-length" value="short">
-                                <span>짧게 (2단어)</span>
+                                <input type="radio" name="generation-mode" value="standard" checked>
+                                <span>기본 (생년월일+전화번호)</span>
                             </label>
                             <label class="length-option">
-                                <input type="radio" name="nickname-length" value="medium" checked>
-                                <span>보통 (3단어)</span>
-                            </label>
-                            <label class="length-option">
-                                <input type="radio" name="nickname-length" value="long">
-                                <span>길게 (4단어)</span>
+                                <input type="radio" name="generation-mode" value="letter">
+                                <span>글자단위 (이름)</span>
                             </label>
                         </div>
                     </div>
 
-                    <div class="input-group">
-                        <label for="phone-last">전화번호 뒷자리 (4자)</label>
-                        <input type="tel" id="phone-last" placeholder="####" maxlength="4" pattern="[0-9]{4}" required
-                            title="숫자 4자리를 입력해주세요.">
+                    <div class="input-group" id="letter-name-group">
+                        <label for="letter-name">이름 (글자단위)</label>
+                        <input type="text" id="letter-name" placeholder="예: 별명" maxlength="20">
+                    </div>
+
+                                        <div id="standard-inputs">
+                        <div class="input-group">
+                            <label>생년월일</label>
+                            <div class="birth-container">
+                                <input type="tel" id="birth-year" placeholder="YYYY" maxlength="4">
+                                <input type="tel" id="birth-month" placeholder="MM" maxlength="2">
+                                <input type="tel" id="birth-day" placeholder="DD" maxlength="2">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>별명 길이</label>
+                            <div class="length-options">
+                                <label class="length-option">
+                                    <input type="radio" name="nickname-length" value="short">
+                                    <span>짧게 (2단어)</span>
+                                </label>
+                                <label class="length-option">
+                                    <input type="radio" name="nickname-length" value="medium" checked>
+                                    <span>보통 (3단어)</span>
+                                </label>
+                                <label class="length-option">
+                                    <input type="radio" name="nickname-length" value="long">
+                                    <span>길게 (4단어)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="phone-last">전화번호 뒷자리 (4자)</label>
+                            <input type="tel" id="phone-last" placeholder="####" maxlength="4" pattern="[0-9]{4}"
+                                title="숫자 4자리를 입력해주세요.">
+                        </div>
                     </div>
 
                     <button type="submit" class="generate-btn">
@@ -113,12 +134,7 @@
                         <button id="retry-btn" class="action-btn primary">다시 하기</button>
                     </div>
                 </div>
-            </div>
-
-            <!-- 별명 히스토리 섹션 -->
-
-
-            <!-- 사이트 정보 섹션 추가 -->
+            </div>            <!-- 사이트 정보 섹션 추가 -->
             <section class="info-sections">
                 <div class="info-card glass">
                     <h3>💡 왜 별명 생성기인가요?</h3>
@@ -148,9 +164,7 @@
             </section>
         </main>
 
-        <footer>
-
-            <p>&copy; 2026 AI Nickname Generator. Created with ❤️</p>
+        <footer>\n            <p>&copy; 2026 AI Nickname Generator. Created with ❤️</p>
             <p class="footer-links">
                 <a href="about.html">소개</a> |
                 <a href="guide.html">가이드</a> |

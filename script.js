@@ -9,8 +9,12 @@
     const birthMonth = document.getElementById('birth-month');
     const birthDay = document.getElementById('birth-day');
     const phoneLast = document.getElementById('phone-last');
+    const letterNameInput = document.getElementById('letter-name');
+    const standardInputs = document.getElementById('standard-inputs');
+    const letterNameGroup = document.getElementById('letter-name-group');
+    const modeRadios = document.querySelectorAll('input[name="generation-mode"]');
 
-    // ?먮룞 ?ъ빱???대룞 濡쒖쭅
+    // 자동 포커스 이동 로직
     const setupAutoForward = (current, next, length) => {
         current.addEventListener('input', () => {
             if (current.value.length >= length && next) {
@@ -19,12 +23,43 @@
         });
     };
 
+    const updateModeUI = () => {
+        const mode = document.querySelector('input[name="generation-mode"]:checked')?.value || 'standard';
+        const isLetter = mode === 'letter';
+
+        if (standardInputs) standardInputs.style.display = isLetter ? 'none' : 'block';
+        if (letterNameGroup) letterNameGroup.style.display = isLetter ? 'block' : 'none';
+
+        if (birthYear) birthYear.required = !isLetter;
+        if (birthMonth) birthMonth.required = !isLetter;
+        if (birthDay) birthDay.required = !isLetter;
+        if (phoneLast) phoneLast.required = !isLetter;
+        if (letterNameInput) letterNameInput.required = isLetter;
+    };
+
+    modeRadios.forEach(radio => radio.addEventListener('change', updateModeUI));
+    updateModeUI();
+
     setupAutoForward(birthYear, birthMonth, 4);
     setupAutoForward(birthMonth, birthDay, 2);
     setupAutoForward(birthDay, phoneLast, 2);
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        const mode = document.querySelector('input[name="generation-mode"]:checked')?.value || 'standard';
+
+        if (mode === 'letter') {
+            const nameValue = (letterNameInput?.value || '').trim();
+            if (!nameValue) return;
+
+            // 로딩 시작
+            showLoading(() => {
+                const nickname = generateNicknameByChars(nameValue);
+                showResult(nickname);
+            });
+            return;
+        }
 
         const year = birthYear.value;
         const month = birthMonth.value;
@@ -34,7 +69,7 @@
 
         if (!year || !month || !day || !phone) return;
 
-        // 濡쒕뵫 ?쒖옉
+        // 로딩 시작
         showLoading(() => {
             const nickname = generateNickname(year, month, day, phone, length);
             showResult(nickname);
@@ -44,6 +79,20 @@
     retryBtn.addEventListener('click', () => {
         resultContainer.classList.add('hidden');
 
+        const mode = document.querySelector('input[name="generation-mode"]:checked')?.value || 'standard';
+
+        if (mode === 'letter') {
+            const nameValue = (letterNameInput?.value || '').trim();
+            if (!nameValue) return;
+
+            // 바로 다시 생성
+            showLoading(() => {
+                const nickname = generateNicknameByChars(nameValue);
+                showResult(nickname);
+            });
+            return;
+        }
+
         const year = birthYear.value;
         const month = birthMonth.value;
         const day = birthDay.value;
@@ -52,7 +101,7 @@
 
         if (!year || !month || !day || !phone) return;
 
-        // 諛붾줈 ?ㅼ떆 ?앹꽦
+        // 바로 다시 생성
         showLoading(() => {
             const nickname = generateNickname(year, month, day, phone, length);
             showResult(nickname);
@@ -63,7 +112,7 @@
         const text = nicknameDisplay.textContent;
         navigator.clipboard.writeText(text).then(() => {
             const originalText = copyBtn.textContent;
-            copyBtn.textContent = '蹂듭궗 ?꾨즺!';
+            copyBtn.textContent = '복사 완료!';
             setTimeout(() => {
                 copyBtn.textContent = originalText;
             }, 2000);
@@ -76,17 +125,17 @@
         const day = parseInt(dayStr);
         const phoneNum = parseInt(phoneStr);
 
-        // ?쒕뜡 ?ㅽ봽??異붽? (留ㅻ쾲 ?ㅻⅨ 寃곌낵 ?앹꽦)
+        // 랜덤 오프셋 추가 (매번 다른 결과 생성)
         const randomOffset = Math.floor(Math.random() * 1000);
 
-        // 濡쒖쭅 湲곕컲 ?몃뜳??怨꾩궛 (怨좎쑀???뺣낫 + ?쒕뜡??
+        // 로직 기반 인덱스 계산 (고유성 확보 + 랜덤성)
         const adjIndex = (year + month + randomOffset) % nicknameData.adjectives.length;
         const nounIndex = (day * phoneNum + randomOffset) % nicknameData.nouns.length;
 
         const phoneSum = phoneStr.split('').reduce((acc, curr) => acc + parseInt(curr), 0);
         const titleIndex = (year + month + day + phoneSum + randomOffset) % nicknameData.titles.length;
 
-        // 異붽? ?⑥뼱瑜??꾪븳 ?몃뜳??
+        // 추가 단어를 위한 인덱스
         const extraAdjIndex = (year * day + randomOffset) % nicknameData.adjectives.length;
 
         const adjective = nicknameData.adjectives[adjIndex];
@@ -94,7 +143,7 @@
         const title = nicknameData.titles[titleIndex];
         const extraAdj = nicknameData.adjectives[extraAdjIndex];
 
-        // 湲몄씠???곕씪 ?ㅻⅨ ?뺤떇 諛섑솚
+        // 길이에 따라 다른 형식 반환
         switch (length) {
             case 'short':
                 return `${adjective} ${noun}`;
@@ -106,16 +155,27 @@
         }
     }
 
+    function generateNicknameByChars(name) {
+        const chars = Array.from(name.replace(/\s+/g, ''));
+        if (chars.length === 0) return '';
+
+        return chars.map((ch) => {
+            const code = ch.codePointAt(0);
+            const adj = nicknameData.adjectives[code % nicknameData.adjectives.length];
+            return `${adj}${ch}`;
+        }).join(' ');
+    }
+
     function showLoading(callback) {
         const loadingContainer = document.getElementById('loading-container');
         const progressBar = document.getElementById('progress-bar');
         const loadingText = document.getElementById('loading-text');
         const messages = [
-            "?곗씠?곕? 遺꾩꽍 以묒엯?덈떎...",
-            "?뱀떊???대챸???쎄퀬 ?덉뒿?덈떎...",
-            "?꾩꽕??怨좎꽌瑜??ㅼ???以?..",
-            "媛???댁슱由щ뒗 ?대쫫??李얜뒗 以?..",
-            "嫄곗쓽 ???섏뿀?듬땲??"
+            "데이터를 분석 중입니다...",
+            "당신의 운명을 읽고 있습니다...",
+            "전설의 고서를 뒤지는 중...",
+            "가장 어울리는 이름을 찾는 중...",
+            "거의 다 되었습니다!"
         ];
 
         form.closest('.card').classList.add('hidden');
@@ -161,10 +221,11 @@
         resultContainer.classList.add('hidden');
     }
 
-    // ?덉뒪?좊━ 愿由??⑥닔\n\n    function showResult(nickname) {
+    function showResult(nickname) {
         resultContainer.classList.remove('hidden');
         typeWriter(nickname, nicknameDisplay);
-        // ?낅젰?쇱쓽 湲몄씠 ?좏깮怨??숆린??
+
+        // 입력폼의 길이 선택과 동기화
         const selectedLength = document.querySelector('input[name="nickname-length"]:checked').value;
         const resultLengthRadio = document.querySelector(`input[name="result-nickname-length"][value="${selectedLength}"]`);
         if (resultLengthRadio) {
@@ -172,7 +233,7 @@
         }
     }
 
-    // ?쎌? ?낆옄 ?앹꽦湲?
+    // 픽셀 입자 생성기
     function initPixelBackground() {
         const bg = document.getElementById('pixel-bg');
         const count = 30;
@@ -194,7 +255,7 @@
             particle.style.setProperty('--drift', drift);
             particle.style.animationDelay = `-${delay}s`;
 
-            // ?됱긽 臾댁옉??(?묓겕/?붿씠??怨꾩뿴 - 苑껋옂 ?먮굦)
+            // 색상 무작위 (핑크/화이트 계열 - 꽃잎 느낌)
             const isPink = Math.random() > 0.4;
             particle.style.background = isPink ? 'rgba(255, 182, 193, 0.7)' : 'rgba(255, 255, 255, 0.5)';
 
@@ -202,7 +263,7 @@
         }
     }
 
-    // ???앹꽦湲?
+    // 새 생성기
     function initBirds() {
         const bg = document.getElementById('pixel-bg');
 
@@ -211,7 +272,7 @@
             bird.className = 'bird';
 
             const duration = Math.random() * 10 + 15;
-            const startY = Math.random() * 60 + 10; // 10% ~ 70% ?믪씠
+            const startY = Math.random() * 60 + 10; // 10% ~ 70% 높이
             const endY = startY + (Math.random() - 0.5) * 20;
 
             bird.style.setProperty('--duration', `${duration}s`);
@@ -220,13 +281,13 @@
 
             bg.appendChild(bird);
 
-            // ?좊땲硫붿씠??醫낅즺 ???쒓굅
+            // 애니메이션 종료 후 제거
             setTimeout(() => {
                 bird.remove();
             }, duration * 1000);
         }
 
-        // 珥덇린 ?앹꽦 諛?二쇨린???앹꽦
+        // 초기 생성 및 주기적 생성
         setTimeout(spawnBird, 1000);
         setInterval(spawnBird, 8000);
     }
@@ -234,4 +295,4 @@
     initPixelBackground();
     initBirds();
 });
-\n
+
