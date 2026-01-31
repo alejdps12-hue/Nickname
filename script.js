@@ -163,7 +163,7 @@
             const code = ch.codePointAt(0);
             const adj = nicknameData.adjectives[code % nicknameData.adjectives.length];
             const noun = nicknameData.nouns[(code * 7) % nicknameData.nouns.length];
-            return `${ch} : ${adj} ${noun}`;
+            return `${ch} : ${ch}${adj} ${noun}`;
         }).join('\n');
     }
 
