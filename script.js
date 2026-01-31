@@ -310,27 +310,40 @@ document.addEventListener('DOMContentLoaded', () => {
     initBirds();
 });
 
-// 방문자 수 추적
+// 방문자 수 추적 (고유 방문자 기반)
 function updateVisitorCount() {
     const today = new Date().toDateString();
-    const visitorData = JSON.parse(localStorage.getItem('visitorData') || '{}');
 
-    // 오늘 방문자 수
-    if (visitorData.date !== today) {
-        // 날짜가 바뀌면 오늘 방문자 수 리셋
-        visitorData.date = today;
-        visitorData.todayCount = 1;
-    } else {
-        // 같은 날이면 세션 확인
-        if (!sessionStorage.getItem('visited')) {
-            visitorData.todayCount = (visitorData.todayCount || 0) + 1;
-        }
+    // 고유 방문자 ID 가져오기 또는 생성
+    let visitorId = localStorage.getItem('visitorId');
+    if (!visitorId) {
+        // 고유 ID 생성 (타임스탬프 + 랜덤 문자열)
+        visitorId = Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('visitorId', visitorId);
     }
 
-    // 총 방문자 수
-    if (!sessionStorage.getItem('visited')) {
-        visitorData.totalCount = (visitorData.totalCount || 0) + 1;
-        sessionStorage.setItem('visited', 'true');
+    // 방문자 데이터 가져오기
+    const visitorData = JSON.parse(localStorage.getItem('visitorData') || '{}');
+
+    // 초기화
+    if (!visitorData.date || visitorData.date !== today) {
+        // 날짜가 바뀌면 오늘 방문자 목록 초기화
+        visitorData.date = today;
+        visitorData.todayVisitors = [];
+    }
+
+    if (!visitorData.allVisitors) {
+        visitorData.allVisitors = [];
+    }
+
+    // 오늘 방문자 추가 (중복 방지)
+    if (!visitorData.todayVisitors.includes(visitorId)) {
+        visitorData.todayVisitors.push(visitorId);
+    }
+
+    // 전체 방문자 추가 (중복 방지)
+    if (!visitorData.allVisitors.includes(visitorId)) {
+        visitorData.allVisitors.push(visitorId);
     }
 
     // 저장
@@ -340,8 +353,15 @@ function updateVisitorCount() {
     const todayElement = document.getElementById('today-visitors');
     const totalElement = document.getElementById('total-visitors');
 
-    if (todayElement) todayElement.textContent = visitorData.todayCount || 0;
-    if (totalElement) totalElement.textContent = visitorData.totalCount || 0;
+    if (todayElement) todayElement.textContent = visitorData.todayVisitors.length;
+    if (totalElement) totalElement.textContent = visitorData.allVisitors.length;
+
+    // 디버그 정보 (개발자 콘솔에 표시)
+    console.log('=== 방문자 통계 ===');
+    console.log('고유 방문자 ID:', visitorId);
+    console.log('오늘 방문자 수:', visitorData.todayVisitors.length);
+    console.log('총 방문자 수:', visitorData.allVisitors.length);
+    console.log('오늘 방문한 고유 ID 목록:', visitorData.todayVisitors);
 }
 
 // 페이지 로드 시 방문자 수 업데이트
