@@ -318,8 +318,9 @@ async function updateVisitorCount() {
     const totalElement = document.getElementById('total-visitors');
 
     const host = window.location.hostname || 'local';
+    const safeHost = host.replace(/[^a-zA-Z0-9_]/g, '_');
     const pathKey = window.location.pathname.replace(/[^a-zA-Z0-9_]/g, '_') || 'index';
-    const namespace = `${host}_nickname`;
+    const namespace = `${safeHost}_nickname`;
     const totalKey = `total_${pathKey}`;
 
     const now = new Date();
