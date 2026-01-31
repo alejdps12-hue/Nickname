@@ -234,46 +234,4 @@
     initPixelBackground();
     initBirds();
 });
-
-// 諛⑸Ц??(CountAPI) - "諛⑸Ц" ?잛닔
-async function updateVisitorCount() {
-    const todayElement = document.getElementById('today-visitors');
-    const totalElement = document.getElementById('total-visitors');
-
-    const host = window.location.hostname || 'local';
-    const safeHost = host.replace(/[^a-zA-Z0-9_]/g, '_');
-    const pathKey = window.location.pathname.replace(/[^a-zA-Z0-9_]/g, '_') || 'index';
-    const namespace = `${safeHost}_nickname`;
-    const totalKey = `total_${pathKey}`;
-
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    const todayKey = `today_${pathKey}_${yyyy}${mm}${dd}`;
-
-    const totalUrl = `https://api.countapi.xyz/hit/${encodeURIComponent(namespace)}/${encodeURIComponent(totalKey)}`;
-    const todayUrl = `https://api.countapi.xyz/hit/${encodeURIComponent(namespace)}/${encodeURIComponent(todayKey)}`;
-
-    try {
-        const totalRes = await fetch(totalUrl, { cache: 'no-store', mode: 'cors' });
-        const totalData = await totalRes.json();
-        if (totalElement) totalElement.textContent = totalData.value;
-    } catch (e) {
-        if (totalElement) totalElement.textContent = '-';
-        console.warn('CountAPI total failed', e);
-    }
-
-    try {
-        const todayRes = await fetch(todayUrl, { cache: 'no-store', mode: 'cors' });
-        const todayData = await todayRes.json();
-        if (todayElement) todayElement.textContent = todayData.value;
-    } catch (e) {
-        if (todayElement) todayElement.textContent = '-';
-        console.warn('CountAPI today failed', e);
-    }
-}
-
-// ?섏씠吏 濡쒕뱶 ??諛⑸Ц?????낅뜲?댄듃
-updateVisitorCount();
-
+\n
